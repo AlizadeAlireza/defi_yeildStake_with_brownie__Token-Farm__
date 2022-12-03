@@ -1,176 +1,98 @@
-# WHAT IS ERC20
+# what is Aave
 
-ERC : Ethereum Request for Comments
+is a decentralized finance application that allows people to lend and borrow cryptocurrencies in turn for
+getting and paying fees.
 
-20 : is just the number they assigned to a proposal.
+is p2p lending using cryptocurrencies as the asset that is traded.
 
-this tokens exist on the Ethereum platform and that in itself consists out of a blockchain that is
-capable of storing transactions and a virtual machine that is capable of running smart contracts.
+### how aave's work
 
-tokens live on the Ethereum blockchain.
-they aren't independent and rely on Ethereum's blockchain and platform.
+aave uses algorithm to determine lending rate and match the lender to borrowers.
+also has associated aave token witch is an Ethereum token that powers the governance
+on their platform.
 
-beside Ether, it can support other tokens and these can work like currencies.
-they can also represent shares of a company, loyalty points, gold certificates and ...
+the idea of this token is that token holders get to vote on changes to the
+application as time goes on.
 
-ERC20 is a guideline ro standard for when we want to create our own token.
+aave utilizes the smart contracts witch is just pieces of code that get ran
+automatically based on certain conditions to run the platform.
 
-## ERC20 examples:
+## aave work with P2P smart contract
 
-    tether, chainlink, unitoken, dai
+instead of using peer to peer lending where a borrower had to match with
+a lender, aave used a peer to smart contract method.
 
-    chainlink is ERC677 as there are upgrade to the ERC20
+### smart contract work
 
-## HOW A ERC20 Token CREATED
+so lenders can deposit money in the smart contract and earn interest and also
+borrowers could deposit their collateral into another smart contract and borrow from any smart contract
+they wanted to borrow from.
 
-a token can be created by smart contract.
+they using algorithms in the smart contract to determine the loan rates based on
+how much liquidity was in each smart contract.
 
-this contract despite of creating tokens also:
+all this is anonymous so we can say aave is a ghost.
 
-    - managing transaction
-    - keep tracking of each tokens holder's balance.
+### stable coins offer more rate
 
-when we want to create our own token, we wirte a smart contract that can create tokens,
-transfer them and keep track of people's balances.
+tether instead of ethereum offer us more rate.
+because tether is a stable coin and it won't move much in price.
 
-If we want our token to be an ERC20 token, we have to implement the ERC20 interface.
+so if we deposit our money aave give us interest for our deposited value.
 
-## Get Token
+### overcollateralized Loan
 
-to get some tokens we have to send some Ether to the smart contract, which will the give us a certain amount of tokens in return.
+after we deposit some of our crypto to aave to earn interest we can
+also decide to borrow against it.
 
-## Tokens Exchange
+#### if we want to borrow crypto we have to be overcollateralized.
 
-each token contract can be completely different from the other.
-so if we want our token be available on an exchange, the exchange has to write custom code,
-so they can talk to our contact and allow people to trade.
+this means if we want to borrow 100$ we must to give the bank 120$.
 
-the same thing goes for wallet providers.
+if i gave somebody 100$ in ethereum and that guy lent me 80$ of tether that is stable coin.
 
-this will be very difficult for hundred of tokens and be very complex and time consuming.
+we use that 80 for a few month and we decide pay it back and get our ETH,
+oh my god! the Ethereum that we deposite has doubled in price.
+we get that amount of eth but we get 200$ of ethereum instead of 100$.
 
-so instead, the community proposed a standard called ERC20.
+## liquidation treshhold
 
-so everyone who wanted to create a token had to reinvent the wheel and that means:
+where they will automatically sell our collateral to cover the loan we have created.
 
-    each token contract was slightly different and that exchanges in wallets had to write custom code
-    to support our token.
+this way investors never lose money.
 
-but in ERC20 however exchanges and wallet providers only have to implement this code once and
-that's why exchanges can add new tokens so quickly and why wallets have support for all ERC20 tokens, without having
-to updated.
+example:
+we put 100$ of ethereum and what is called maximum loan to value is 80%.
+which means we can borrow 80% of that 100$ and we decide to borrow 80\$ of tether.
 
-## Function and Implement
+so if the Ethereum price drops to more 82.5% of its value which is the liquidation precentage,
+the aave will automatically take our ethereum and pay back the lender.
+how ever we get to keep that 80 dollar that we borrowed.
 
-it defines 6 mandatory functions that our smart contract should implement and 3 optional ones.
+## leverage Lending is Possible
 
-### optionally:
+we have 100$ of ethereum and we deposite it to aave and withdraw 80$ of usdc
+which is ethereum stable token.
 
-    - name : "Alireza"
+we get that and go over uniswap and then trade out for more ethereum and back to aave
+and deposit the ethereum that we take from uniswap.
 
-    - symbol : "ALZ"
+now we deposite 180$ of ethereum, but still we can borrow 80% of money that we deposit it.
+means 80% of uniswap ethereum that we take, that can be 64$ of usdc.
 
-    - decimals : 8
-    how dividable our token is by specifying how many decimals it should supports.
+if we reaped that work and give the 64$ of ethereum to aave, we have 244$ of ethereum in overall.
+but still we only have original 100\$.
 
-### mandatory:
+so if eth goes up 10% , we don't get 24,4 dollar more.
+we get our original 100$ interest that can be 10$.
 
-    - totalSupply of our token:
-        when this limit is reached, the smart contract will refuse to create new tokens.
+## paying loans back
 
-    - balanceOf:
-        return how many tokens a given address has.
+aave loans not like traditional loans where we have to pay it all back in a certain day.
 
-    -transfer:
-        takes a certain amount of token from the totalSupply and gives them to a user.
+this is no fixed size period to payback the loan.
+as long as our position is safe we can borrow for an undefined period.
+as time passes the accured interest will grow, make our health factor decrease,
+which means result in our deposited asset becoming more likely to be liquidated.
 
-        the holder of the ERC20 token can call the function transfer to transfer
-        his ERC20 token over to a recipient.
 
-        transfer the amount of token that msg.sender has over to a recepient.
-
-    -transferFrom:
-        can be used transfer tokens between any two users who have them.
-
-        once a holder approve another spender to transfer his token,
-        then the spender can call the function transferFrom():
-
-            - transfering from the holder to another recipient for the amount.
-
-        transfer some token from sender to recipient for the amount from the input.
-        can call as long as the sender has approved msg.sender to spend his token.
-
-    - approve:
-        verifies that our contract can give a certain amount of tokens to a user,
-        taking into account the totalSupply.
-
-        instead of calling transfer directly (in transfer() function),
-        the holder can allow another spender to send his token on his behalf can
-        call approve() and approving the sender to spend some of token.
-
-    -allowance:
-        like approve except that it checks if one user has enough balance to send a certain amount of tokens to
-        someone else.
-
-        how much is a spender allowed to spend from a holder, we can find it with allowance().
-
-        the caller is allowing the spender to spent amount of his token.
-
-    - mint:
-        create new tokens.
-
-        whoever deploys this contract will own all the tokens to start.
-        then we'll give it totalSupply.
-
-    - burn:
-        means destroy the tokens form circulation.
-
-        basically it's sent to an address that no one hat the private key of
-
-## ERC20 Not Perfect itself
-
-it's only a guidline and people are free to implement the required functions however they like.
-that has lead to some interesing problems.
-
-    to buy some tokens we have to send Eth to the token contract.
-    some people tried to sending other ERC20 tokens instead.
-    if the contract was not designed with this in mind, tokens being lost.
-
-for solve this, the community is already working on extending the ERC20 standard with ERC223.
-
-## implementing in code:
-
-    - when we mint tokens the total supply will increase
-    and when we burn tokens the totalSupply will decrease.
-
-    - how much each user has a token
-    mapping (address => uint)
-
-    - for approve to sender to spend some of his token on his behalf,
-    we need to save that in a state variable.
-
-transfer():
-
-    - in this after call we need to update balanceOf.
-    - after update we need to emit.
-    - last thing is return a bool.
-
-approve():
-
-    - can approve a spender to spend some of his balance.
-    - we need to emit event.
-
-transferFrom():
-
-    - we need to detuct after spend the token from msg.sender that approved from spender.
-    - after transfering token we need to update balanceOf.
-    - after all this we need to emit Transfer.
-
-mint():
-
-    - when we generate new tokens we need to update the balance of the caller.
-    - after the new tokens generated we need to update the totalSupply().
-    - emit the Transfer:
-
-        when we creating new tokens we don't transfer from any account,
-        so we put address(0).
