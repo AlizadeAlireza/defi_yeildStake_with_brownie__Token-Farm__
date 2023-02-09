@@ -1,118 +1,357 @@
-				defi and Aave
+what this application is going to allow users to stake or deposit their 
+tokens into what's called ---> token farm contract 
 
-defipulse & defilama
-defipulse ---> is an application that shows some of the top defi projects based on
-how much total asset is locked into each protocol 
+there's a many feature that we can do when the users depost their tokens
 
-Aave ----> witch currently is the number one ranked defi application 
+we can do is as admins of this wallet we can actually issue a reward to our users
+based on how much they've staked 
 
-Decentralized Exchange (DEX) ---> parasop is what's known as a dex 
-it allows us to trade tokens increadibily easy on the blockchain  
+on the backend i'm going to run an issue token script it's going to send all users
+that have some stake a little bit of a dap token reward 
 
-borrowing and lending is a critical piece to doing any type of really interesting
-financial applications or financial instruments
+*** we're not going to go over the unstaking portion of front end app.
 
-apy ---> tell you how much precentage over a year you'll actually get in returns
-from staking or depositing an asset 
+DappToken.sol ---> this is going to be the token that we're going to give out
+to users who are staking on our platform ----> regular old ERC20
 
-weth gateway ---> that this is the west gateway when we despoit our convent eath it actually get transferred into an erc20 version of our ethereum and then it'll go ahead and deposit it into the ave contract  
-
-ETH gets converted to an ERC10 version of ETH known as Wrapped ETH or WETH
-
-Interest bearing token (aToken) or ae : is what's called an interest-bearing token and goes up in real time 
-this number we deposit continually going up : this is the profit given to us from other people borrowing the eath that we've deposited into avee
-depositing into aave will give us interest back as a payment for other people borrowing the eath that we've deposited 
-
-we can also use this eath as what's called collateral ---> we can use it to borrow to other asset 
-
-DAI ---> is a commenly used stablecoin
-STABLE COINS ---> are tokes that will be "stable" by matching the value of another asset, or being less volitile
-
-Wrapped bitcoin ---> (wBTC) ---> witch represent bitcoin price
-
-									why borrow?
-
-if you borrow an asset and you do not pay attention to how much you have for an underlying collateral you could
-get liquidated and lose some of your funds
-
-borrowing tokens --- > if the amount that we borrow ends up being too high we'll actually get what's called liquidated 
----> your health factor must be above 1!
-health factor ---> represents how close to being liquidated 
-once your health factor reaches one the collateral you've actually deposited will get liquidated and somebody else will get paid to take some of your collateral
-the aave application is always solvent 
-solvent : the ability to meet debt obligation(means it's never in debt)
-
-choose our health factor rate : stable vs variable
-when we borrow an asset we actually have to pay some interest ---> this payment is actually going to go to the people who are depositing dai 
-or depositing the asset. the interest rate that we're going to pay is actually going to be paid to those who are depositing the asset that we're borrownig
-so like how we're getting interest on our deposited collateral others are getting interest on their deposited collateral based off of how often people are 
-borrownig it
-stable apy --> witch always be 4%
-variable apy ---> witch will change based off of how volatile and how in demand this asset is
-
-****programmatic Interactions with aave
-
-aave doc developers 
---->we're actually not going to deploy any contract because all the contracts that
-we're going to work with are already deployed on chain 
-
-1) create aave_borrow.py
-1,1 ) converting ETH --> Weth(the erc20 version of eth)
-2) create get_weth.py
-
-in kovan etherscan we deposit eth into contract and it transfer us some weath
-so we need our script to be able to call deposit contract 
-need ABI and ADDRESS
-
-get the WETH interface from lesson 10 source 
-
-aave actually has all these same contracts on the mainnet as well and we know that
-we're not going to be working with any oracles 
----> because that we don't actually have to deploy any mocks ourselves --->
-we don't have to
-
-
-we have get_weth func and let's go start borrowing
-
-where we deposit and borrow from in aave is in their contract this lending pool 
-the lending pool contract is the main contract for the protocol 
-
-lending pool address can actually change depending on a lot of different pieces
-the one func that we need to work with it's this getLendingPoolConfiguration()
-
-we can go to etherscan ave lending pool addresses and copy it in config-brownie
-
-change the imports in IlendingPool.sol interface 
-protocol-v2/contracts/protocol/libraries/types/
-
-the interfaces compile down to the abi and we already have the address
-
-erc20 token have an approved function that make sure that  whenever we send a 
-token to somebody or whenever a token calls a function that uses our tokens we actually have given them premission to do so
-
-2 ) create approve fun
-3 ) create deposit function
-we can use the lending pool deposit method
-
-address asset --> erc20 address
-uint256 amount ---- > the amount of the token
-address onBehalfOf ---> account.address we're depositing this collateral for ourselves 
- uint16 referralCode so the refferal code is ---> 0 --> it is actually deprecated
- and don't actually work anymore and we're just always going pass 0
+func stakeTokens():
+ we want to stake amount and the address
+ for our app we can stake any amount greater than zero
  
- 4) getUserAccountData() ---> get_borrowable_data() 
-function getUserAccountData(address user)
-all that we need is user's address to get start here
+ from who ever calls stake tokens to this tokenfarm contract and we'll send
+ the amount 
+ 
+ with 0.8.0 ---> don't worry about safe math
+ we only want certain specific tokens to be staked on our platform
+ 
+ 
+ func tokenIsAllowed() : the address of token deposit must be supported token from our Dapp
+ 
+ now we have a way to check to see if allowed tokens are there let's actually 
+ write a function to add allowed tokens 
+ --> addAllowedTokens -> onlyOwner
+ 
+ now start checking to see if tokens that these stakers are going to stake
+ is allowed? 
+ require statement.
+ 
+ we use transferFrom since our token farm contract isn't the one that owns the 
+ erc20 and need to abi to call this transferFrom function 
+ so we need IERC20 interface
+ 
+ 
+ we need to track how actually token send us . ---> create mapping 
+ 
+ 
+ 
+ issueTokens() --> is a reward we're giving to the users who use our platform:
+ so we want to issue some tokens based off the value underlying that they've 
+ given us
+ control only by admin 
+ loop through the list of all the stakers that we have and shoud make it!!!
+ 
+ when somebody stakes a token we're going have to update this list.
+ we want to make sure they're only added if they're not already on the list.
+ for do this we should get an idea of how many unique tokens a user actually has.
+ 
+ ---> create updateUniqueTokensStaked():
+ 	it's going to get a good idea of how many unique tokens a user has.
+ 	if a user has one unique token we can add them to list.
+ 	if they have more than 1 we know that they've already been added to
+ 	the list so we don't need to add them there
+ 	
+ update some unique tokens staked mapping
+ 
+ better idea:
+each one of these users has staked what we can do is we can figure out wether or not we want to push them onto this stakers list.if already on there we don't want to push them on there.
+loop through this list of stakers 
 
-interest rate mode which is going to be stable or variable
-5 ) Borrowing DAI
-we'll head over to the chain link documentation 
-we'll go to ethereum price feeds we'll fine 
+***we have to send them a token reward we have to figure out how to actually 
+send them this token and then we also have to get their total value locked.
+
+the reward ---> DAPP token
+need to know what a reward token is actually going to be 
+so we need to create a constructor and we'll store this dap token as a global 
+variable.
+now we have this dap token with its associated address ---> call functions on
+how much we must send to them? need some function to get the total value
+
+uint userTotalValue = we name that func ---> getUserTotalValue() 
+we gotta find out how much each of these tokens actually has
+
+a lot of protocols do instead of actually them sending and them issuing the tokens 
+is they actually just have some internal methods that allows people to go 
+and claim their tokens like claiming airdrops.
+because it's a lot more gas efficient to have users claim the airdroped istead 
+of the application actually issuing the tokens ---> very gas expensive to do
+looping through all these addresses and checking all these addresses.
 
 
-Repaying :
+after allowed tokens and we're going to find how 
+if they have some token staked we'll go ahead and find it.
+so we're going loop through those allowed tokens and we're going find how much 
+this user has for each one of these allowed tokens.
 
-repay_all()  ---> first call the approve function to prove that we're going to pay back
+after creating loop let's go ahead and we'll add the total value
+totalValue = total value + ; // however much value this person has in these tokens in this single tokens
 
 
-1 ) 
+getUserTotalValue() is the total value across all the different tokens.
+we need a way to get the total value across one token.
+
+-------------------------------------------------------------------------
+
+for this we need to create a new function ---> getUserSingleTokenValue(_user) 
+and pass it the single token that we're on right now --> allowedTokens[allowedTokenIndex]
+
+create function getUserSingleTokenValue ---> get address of the user and an address of a token
+
+we want to get value of how much this person staked of this single token to 
+convertion  exactlyl how much value this person has staked in our app.
+
+we don't use require here because we want to actually keep going,
+if this is zero we don't want the transaction revert, want keep going.
+
+how to get value of a single token?
+- need staking balance 
+- price of that token
+# price of the token * staking balance[_token][_user]
+
+------------------------------------------------------------------
+
+for this we need to a new Func ---> getTokenValue(_token)
+
+get chainlink once again.
+
+we're going to actually have to map each token to their associated price feed addresses.
+
+mapping (address => address) public tokenPriceFeedMapping;
+---> map the token to their associated price feeds.
+
+so we're going to have to a function ---> setPriceFeedContract()
+it is only owner.
+we don't want anybody to be able to set the priceFeed.
+
+we get the priceFeed address from _token argument that is the _token address in tokenPriceFeed mapping.
+
+after import chainlink interface we can grab that.
+
+we need to know how many decimals the price feed contract has,
+that way we can match everything up to be using the same units.
+
+so now we scrolling back and adding all this stuff in uint.
+
+so our staking balance is going be in 18 decimals so it's going to be 
+1000000000000000000
+and multiply in eth/usd -> 100(00000000) and devide on 10 ** decimals,
+decimal for eth/usd
+
+for this math operation we need test.it's necessary.
+
+finish func getUserTotalValue with return totalValue;
+
+then we can pull up to our issue tokens.
+
+now that we have the total value that this user that actually logged we can 
+just transfer the amount of tokens that they have in total value.
+
+we'll say however mush they have in total value staked on our platform and
+we'll issue them as a reward.
+
+stakeTokens - DONE!!!
+issueTokens - DONE!!!
+getValue - DONE!!!
+addAllowedTokens - DONE!!!
+unStakedTokens - ?
+
+-------------------------------------------------------------------------
+
+the first thing we want to do in this function is fetch staking balance.
+second is require for balance > 0.
+third is transfer.
+
+once we transfer the token we'll do staking balance of this token of msg.sender and we're going to update this balance to zero.(entire balance here)
+
+then we're going to update how many of those unique tokens that they have.
+
+can this be reentrancy attack????!!!!!
+
+last thing is that we could do is update our stakers array to remove this person
+no longer anythings staked 
+
+
+*** issue tokens function going to check to see how much they actually have staked and if they don't have anything staked then they're not going to get sent
+any tokens.
+
+
+-------------------------------------------------------------------------------
+
+brownie:
+
+dapp token takes one parameter witch is dapp token address to give reward
+
+once we've deployed this tokenFarm contract we need a couple things:
+- need to send this some dapp tokens as a reward.
+
+we can only stake tokens that are allowed and each one of this tokens also is 
+going to need to have some price feed assosiated.
+
+add_allowed_tokens(token_farm, dict_of_allowed_tokens, account)
+1. need to call add alowed function
+2. a dictionary of the different token addresses and their assosiated price feeds
+3. we need an account 
+
+need the address of the different tokens that we want to have 
+how to get addresses of different tokens?
+
+for add tokens we can do it in our config 
+
+what we put in get_contract needs to match our string in our config 
+and we can create our mock and declare them into contract_to_mock.
+
+in mock_deploy clear coordinator and oracle and instead we'll deploy those 
+that mock weth and mock DAI
+
+we have address of fau and weth token and if those don't exist on the network we're working on we're going to deploy a mock so.
+now we have addresses we can do a dictionary of allowed tokens is going to be equal to this dictionary tath we make.
+
+we're just going to wrap each one of these contracts like the dapp token
+
+we need dai and eth usd price feed ---> in the kovan
+
+we can pass the dictionary to the add allowed tokens 
+-- > will map the tokens and their addresses with their associated price feeds
+so we can get them all to equal the same value in our contracts.
+
+in add_allowed_tokens() we're going to loop through all these different tokens 
+and call the add allow tokens functino on it.
+--------------------------------------------------------------
+-----------------------------------------------------------------
+now it's time to run some test:
+
+ideally every piece of code in our smart contract should be tested in some form.
+
+make sure we are on local network.
+test_set_price_feed_contract():
+in mapping _priceFeed sould now be updated and this is address to address.
+
+another thing is to make sure non_owners can't call this function
+that expecting this contract call to actually revert.
+
+		++++++	++++++	++++++	++++++	++++++	++++++
+test_issueTokens():
+in order to test issuing tokens we actually need to stake some tokens first.
+
+		++++++	++++++	++++++	++++++	++++++	++++++
+test_stake_tokens():
+
+act -> actually send some tokens to our token farm.first need to call dapp_token
+
+we're going to costly be using an amount staked for a lot of our test here.
+
+we're going to create our first fixture 	
+now we can use this amount staked fixture as basically a static variable.
+
+pytest and brownie will grab all conftest stuff and put it into a function as
+an argument.
+for stakingBalance -> we need pass two variables :
+- first address
+- second address 
+to get the amount of staking.
+token_farm.stakingBalance(dapp_token.address, account.address) == amount_staked
+
+so in this line of code we pass token address of the user address that stake
+balance.
+and in amount stake that deposit 1 ether....the amount staked must be equal to 1.
+
+ 
+		++++++	++++++	++++++	++++++	++++++	++++++
+		
+test_issue_tokens():
+use amount staked parameter 
+istead  token_farm, dapp_token = deploy_token_farm_and_dapp_token()
+we going to do ->
+ token_farm, dapp_token = test_stake_tokens(amount_staked)
+ 
+ this is why we return token_farm and dapp_token in our test stake token
+ 
+ we should have done our testing already on the things like getUserTotalValue()
+ because it's a subset of issue tokens 
+ 
+		=======================================================
+		
+for front end we use type script, react and useDapp
+
+useDapp : it's a framework for rapid dap development and works great with react
+
+
+first ---> create react app boilerplate
+install npm
+install yarn
+
+it is better to have a front end repo seprate from your contracts
+
+in front_end folder:
+
+node_modules : project dependecies like pip ---> packages
+Public : static Images and files
+src : we working with a lot.
+
+start:
+cd front_end
+$ yarn ---> to make sure everything installed
+
+yarn is going to go out and download these dependencies and store them into 
+node modules and yarn.lock is going to tell us exactly what it downloaded.
+
+we want to work with useDapp.
+after setting DAppProvider we must add config
+ 
+at the first bracket we're going to type TS.
+and the second bracket we're an object here.
+
+header component --> where we put modular parts of our front-end
+use materials ui
+from materials we're going to use what's called containers --> allows us to style
+
+add main.tsx in components
+
+in the stake form:
+	- our wallet balance 
+	- big stake button
+	
+WalletBalance ---> reading offchain finally after a lot of ts and react setup
+we can provides a way to fetch the balance of erc20 tokens specifide by a token address
+
+for stake and interact with the contract we need to create another component.
+we're going to create a stake form with a big button that says stake and 
+the user can actually choose how much they want to stay on our smart contract.
+
+we want it to stake that amount and we also need to have some type of form
+here we need to know how much we want to stake right
+
+send that amount as part of our stake
+
+how to call this approve function here? we're actually going to make new state hooks.
+
+if already been approved if it's not already been approved and what we need to do?
+- we need some approved thing
+- stake tokens thing 
+for approave we need address, abi and chainId.
+
+useContractFunction --> it's a hook in use dap that returns an object with two 
+variables ---> state and send.
+state : used to represent the status of the transaction --> automatically kickoff
+the stake after we approve 
+
+send: to send a transaction we have to actually to use send function.
+
+useEffect: is allows us to do something if some variable has changed.
+one of these things that we want to track is erc20 stake.
+if successful we want to do some stuff.
+
+notifications:
+help us actually get notified on whether or not our transactions are completing.
+
+
+Alerts:
